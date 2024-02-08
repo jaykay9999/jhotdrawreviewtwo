@@ -78,10 +78,19 @@ public class PertPanel extends JPanel {
     ButtonGroup group = new ButtonGroup();
     m.add(rbmi = new JRadioButtonMenuItem(new ZoomAction(editor, 0.1, null)));
     group.add(rbmi);
+
     for (double zoomLevel = 0.25; zoomLevel <= 4.0; zoomLevel += 0.25) {
       if (zoomLevel == 1.0) {
         m.add(rbmi = new JRadioButtonMenuItem(new ZoomAction(editor, zoomLevel, null)));
         rbmi.setSelected(true);
+        group.add(rbmi);
+      } else if (zoomLevel == 1.5) {
+        zoomLevel += 0.25;
+        m.add(rbmi = new JRadioButtonMenuItem(new ZoomAction(editor, zoomLevel, null)));
+        group.add(rbmi);
+      } else if (zoomLevel >= 2) {
+        zoomLevel += 0.75;
+        m.add(rbmi = new JRadioButtonMenuItem(new ZoomAction(editor, zoomLevel, null)));
         group.add(rbmi);
       } else {
         m.add(rbmi = new JRadioButtonMenuItem(new ZoomAction(editor, zoomLevel, null)));
