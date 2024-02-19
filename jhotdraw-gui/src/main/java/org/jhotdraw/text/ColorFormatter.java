@@ -268,13 +268,11 @@ public class ColorFormatter extends DefaultFormatter {
             Integer.parseInt(matcher.group(1)),
             Integer.parseInt(matcher.group(2)),
             Integer.parseInt(matcher.group(3)));
-      } catch (NumberFormatException nfe) {
+      } catch (
+          IllegalArgumentException
+              ex) { // NumberFormatException is a subclass of IllegalArgumentException
         ParseException pe = new ParseException(str, 0);
-        pe.initCause(nfe);
-        throw pe;
-      } catch (IllegalArgumentException iae) {
-        ParseException pe = new ParseException(str, 0);
-        pe.initCause(iae);
+        pe.initCause(ex);
         throw pe;
       }
     }
