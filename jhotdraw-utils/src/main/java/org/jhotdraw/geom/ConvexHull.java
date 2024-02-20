@@ -99,6 +99,16 @@ public class ConvexHull {
   }
 
   /**
+ * Computes the convex hull from a set of points.
+ *
+ * @param points
+ * @return convex hull of the points
+ */
+public static <T extends Point2D> List<T> getConvexHull(List<T> points) {
+    return Arrays.asList(getConvexHull(points.toArray((T[]) new Point2D[points.size()])));
+}
+
+  /**
    * Computes the convex hull from a set of points.
    *
    * @param points
