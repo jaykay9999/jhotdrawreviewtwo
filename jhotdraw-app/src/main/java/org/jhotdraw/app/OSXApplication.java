@@ -347,8 +347,20 @@ public class OSXApplication extends AbstractApplication {
     }
   }
 
-  /** Creates a menu bar. */
-  protected JMenuBar createMenuBar(View v) {
+ class MenuObject {
+    JMenu menu;
+    Function<View, JMenu> createMenu;
+    int position;
+
+    MenuObject(JMenu menu, Function<View, JMenu> createMenu, int position) {
+        this.menu = menu;
+        this.createMenu = createMenu;
+        this.position = position;
+    }
+}
+
+/** Creates a menu bar. */
+protected JMenuBar createMenuBar(View v) {
     JMenuBar mb = new JMenuBar();
     // Get menus from application model
     JMenu fileMenu = null;
@@ -385,40 +397,25 @@ public class OSXApplication extends AbstractApplication {
       }
       mb.add(mm);
     }
-    // Create missing standard menus
-    if (fileMenu == null) {
-      fileMenu = createFileMenu(v);
-    }
-    if (editMenu == null) {
-      editMenu = createEditMenu(v);
-    }
-    if (viewMenu == null) {
-      viewMenu = createViewMenu(v);
-    }
-    if (windowMenu == null) {
-      windowMenu = createWindowMenu(v);
-    }
-    if (helpMenu == null) {
-      helpMenu = createHelpMenu(v);
-    }
-    // Insert standard menus into menu bar
-    if (fileMenu != null) {
-      mb.add(fileMenu, 0);
-    }
-    if (editMenu != null) {
-      mb.add(editMenu, Math.min(1, mb.getComponentCount()));
-    }
-    if (viewMenu != null) {
-      mb.add(viewMenu, Math.min(2, mb.getComponentCount()));
-    }
-    if (windowMenu != null) {
-      mb.add(windowMenu);
-    }
-    if (helpMenu != null) {
-      mb.add(helpMenu);
+    // Define a list of menu objects
+    List<MenuObject> menuObjects = Arrays.asList(
+        new MenuObject(fileMenu, this::createFileMenu, 0),
+        new MenuObject(editMenu, this::createEditMenu, Math.min(1, mb.getComponentCount())),
+        new MenuObject(viewMenu, this::createViewMenu, Math.min(2, mb.getComponentCount())),
+        new MenuObject(windowMenu, this::createWindowMenu),
+        new MenuObject(helpMenu, this::createHelpMenu)
+    );
+    // Loop over the menu objects
+    for (MenuObject menuObject : menuObjects) {
+        if (menuObject.menu == null) {
+            menuObject.menu = menuObject.createMenu.apply(v);
+        } else {
+            mb.add(menuObject.menu, menuObject.position);
+        }
     }
     return mb;
-  }
+}
+
 
   @Override
   public JMenu createViewMenu(final View view) {
